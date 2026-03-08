@@ -1,26 +1,48 @@
-//package by.pirog.project_for_devops.config;
-//
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.data.redis.cache.RedisCacheConfiguration;
-//import org.springframework.data.redis.cache.RedisCacheManager;
-//import org.springframework.data.redis.connection.RedisConnectionFactory;
-//import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-//import org.springframework.data.redis.serializer.RedisSerializationContext;
-//
-//import java.time.Duration;
-//import java.util.Map;
-//
-//@Configuration
-//public class CacheConfig {
-//
-//    @Bean
-//    public RedisCacheManager cacheManager(RedisConnectionFactory cf) {
-//        RedisCacheConfiguration cfg = RedisCacheConfiguration.defaultCacheConfig()
-//                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
-//                        new GenericJackson2JsonRedisSerializer()))
-//                .entryTtl(Duration.ofMinutes(10))
-//                .disableCachingNullValues();
-//        return RedisCacheManager.builder(cf).cacheDefaults(cfg).build();
-//    }
-//}
+package by.pirog.project_for_devops.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.connection.RedisClusterConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import java.time.Duration;
+import java.util.List;
+
+
+@Configuration
+public class CacheConfig {
+
+    @Bean
+    public LettuceConnectionFactory redisConnectionFactory() {
+        RedisClusterConfiguration clusterConfig = new RedisClusterConfiguration(
+                List.of(
+                        "redis-master-1:6379",
+                        "redis-master-2:6379",
+                        "redis-master-3:6379"
+                )
+        );
+        clusterConfig.setMaxRedirects(3);
+        return new LettuceConnectionFactory(clusterConfig);
+    }
+
+    @Bean
+    public RedisCacheManager cacheManager(LettuceConnectionFactory connectionFactory) {
+        return RedisCacheManager.builder(connectionFactory)
+                .cacheDefaults(
+                        RedisCacheConfiguration.defaultCacheConfig()
+                                .entryTtl(Duration.ofMinutes(10))
+                                .serializeKeysWith(
+                                        RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer())
+                                )
+                                .serializeValuesWith(
+                                        RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer())
+                                )
+                )
+                .build();
+    }
+}

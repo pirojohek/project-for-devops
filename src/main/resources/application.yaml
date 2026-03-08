@@ -13,6 +13,9 @@ spring:
 #      host: localhost
 #      port: 6379
 
+  redis:
+    cluster:
+      nodes:
   jpa:
     hibernate:
       ddl-auto: update

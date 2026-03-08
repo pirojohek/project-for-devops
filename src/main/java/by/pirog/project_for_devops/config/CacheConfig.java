@@ -21,9 +21,9 @@ public class CacheConfig {
     public LettuceConnectionFactory redisConnectionFactory() {
         RedisClusterConfiguration clusterConfig = new RedisClusterConfiguration(
                 List.of(
-                        "redis-master-1:6379",
-                        "redis-master-2:6379",
-                        "redis-master-3:6379"
+                        "127.0.0.1:7001",
+                        "127.0.0.1:7002",
+                        "127.0.0.1:7003"
                 )
         );
         clusterConfig.setMaxRedirects(3);

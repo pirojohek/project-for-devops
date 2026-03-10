@@ -1,0 +1,20 @@
+---
+- name: Установка PostgreSQL
+  apt:
+    name:
+      - postgresql
+      - postgresql-contrib
+    state: present
+    update_cache: yes
+
+
+- name: Install psycopg2 for Ansible PostgreSQL modules
+  apt:
+    name: python3-psycopg2
+    state: present
+
+- name: Запуск PostgreSQL
+  systemd:
+    name: postgresql
+    state: started
+    enabled: yes # добавляем в автозапуск системы

@@ -1,0 +1,7 @@
+---
+- name: Установка Postgres server
+  hosts: servers
+  become: yes
+
+  roles:
+    - postgres

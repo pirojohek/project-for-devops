@@ -1,0 +1,21 @@
+---
+# Объяснение почему здесь я использую defaults, а не vars
+# У defaults низкий приоритет, их можно переопределить из playbook, inventory
+# если бы я писал в vars, в этом случае я бы не смог переопределить их, если бы в этом была необходимость
+
+
+postgres_version: 16
+
+postgres_db: mydb
+postgres_username: my_user
+postgres_password: my_password
+postgres_host: localhost
+postgres_port: 5432
+
+
+backup_root: "/home/{{ ansible_user }}/postgres_backup"
+backup_dirs:
+  - dumps
+  - logs
+  - scripts
+  - temp

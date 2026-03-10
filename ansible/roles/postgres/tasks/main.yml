@@ -1,0 +1,11 @@
+---
+- name: Создаем файл env
+  template:
+    src: app.env.j2
+    dest: /etc/profile.d/db_env.sh
+    mode: '0644 '
+
+
+- import_tasks: install.yml
+- import_tasks: create_db.yml
+- import_tasks: create_backup.yml

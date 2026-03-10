@@ -1,0 +1,7 @@
+---
+- name: Создаем redis-cluster
+  hosts: servers
+  become: yes
+
+  roles:
+    - redis

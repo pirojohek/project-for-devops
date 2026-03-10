@@ -1,0 +1,33 @@
+---
+- name: Создаем папку для бэкапов
+  file:
+    path: "{{ backup_root }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Создаем поддиректории
+  file:
+    path: "{{ backup_root }}/{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755' # владелец может читать, писать, выполнять остальные читать и выполнять
+  loop: "{{ backup_dirs }}"
+
+- name: Копируем скрипт бэкапа PostgreSQL
+  template:
+    src: backup_postgres.sh.j2
+    dest: "{{ backup_root }}/scripts/backup_postgres.sh"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Добавляем crontab для бэкапов
+  cron:
+    name: "Ежедневный бэкап PostgreSQL" # это метка задания, чтобы проверять, нужно ли обновлять, если будет повторный запуск
+    user: "{{ ansible_user }}"
+    job: "{{ backup_root }}/scripts/backup_postgres.sh"
+    minute: "0"
+    hour: "0"

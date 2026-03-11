@@ -3,3 +3,4 @@
 - import_tasks: create_dirs.yml
 - import_tasks: copy_configs.yml
 - import_tasks: redis_create.yml
+- import_tasks: redis-compose-service.yml

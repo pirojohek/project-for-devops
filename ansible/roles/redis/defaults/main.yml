@@ -25,3 +25,6 @@ replica_ports:
   - 7011
   - 7012
   - 7013
+
+service_name: redis-compose
+compose_dir: /home/pirog

@@ -1,0 +1,41 @@
+- name: Копируем docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: "/home/{{ ansible_user }}/docker-compose.yml"
+    mode: "0644"
+
+- name: Поднимаем контейнеры
+  command: |
+    sudo docker compose up -d
+
+
+- name: Ждем пока Redis поднимется на всех нодах
+  become: yes
+  shell: docker exec {{ item }} redis-cli ping
+  register: redis_ping
+  retries: 20
+  delay: 3
+  until: redis_ping.stdout.find('PONG') != -1
+  loop: "{{ redis_nodes_names }}"
+
+- name: Проверяем, есть ли уже кластер
+  shell: docker exec redis-master-1 redis-cli cluster info
+  register: redis_cluster_info
+  ignore_errors: yes
+
+
+- name: Создаем кластер Redis
+  command: >
+      docker exec -i redis-master-1 redis-cli --cluster create
+      redis-master-1:6379
+      redis-master-2:6379
+      redis-master-3:6379
+      redis-replica-1:6379
+      redis-replica-2:6379
+      redis-replica-3:6379
+      --cluster-replicas 1
+      --cluster-yes
+  when: "'cluster_state:ok' not in redis_cluster_info.stdout"
+  register: cluster_create
+  changed_when: "'[OK]' in cluster_create.stdout"
+  failed_when: "'Error' in cluster_create.stdout"

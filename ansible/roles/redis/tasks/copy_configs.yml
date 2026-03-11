@@ -1,0 +1,7 @@
+- name: Копируем redis.conf в каждую ноду
+  copy:
+    src: redis.conf
+    dest: "{{ redis_root }}/{{ item }}/redis.conf"
+    mode: "0644"
+  loop: "{{ nodes }}"
+

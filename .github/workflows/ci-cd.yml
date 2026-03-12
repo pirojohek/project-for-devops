@@ -12,5 +12,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build jar
         run: ./gradlew build
+
       - name: Deploy via Ansible
-        run: ansible-playbook ansible/playbooks/site.yml -i ansible/inventory/hosts.ini -e action=deploy
+        run: |
+          cd ansible
+          ansible-playbook playbooks/site.yml -e action=deploy

@@ -1,0 +1,14 @@
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: Enable and start Spring Boot
+  systemd:
+    name: "{{ service_name }}"
+    enabled: yes
+    state: started
+
+- name: Restart Spring Boot
+  systemd:
+    name: "{{ service_name }}"
+    state: restarted

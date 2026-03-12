@@ -1,0 +1,4 @@
+- name: Управление сервисом
+  systemd:
+    name: "{{ service_name }}"
+    state: "{{ action }}"

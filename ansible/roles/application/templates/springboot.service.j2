@@ -1,0 +1,22 @@
+[Unit]
+Description=Spring Boot Application {{ service_name }}
+After=redis-compose.service postgresql.service
+Requires=redis-compose.service postgresql.service
+
+[Service]
+Type=simple
+User={{ user }}
+Group={{ group }}
+WorkingDirectory= {{ working_dir }}
+ExecStart=/usr/bin/java -jar {{ jar_path }}
+Restart=on-failure
+RestartSec=5s
+StartLimitBurst=3
+StartLimitIntervalSec=60
+KillSignal=SIGINT
+TimeoutStopSec=20
+StandardOutput=append:/var/log/{{ service_name }}/app.log
+StandardError=append:/var/log/{{ service_name }}/app.log
+
+[Install]
+WantedBy=multi-user.target

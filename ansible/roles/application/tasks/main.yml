@@ -1,0 +1,9 @@
+- import_tasks: install.yml
+  when: action == "install"
+
+- import_tasks: deploy.yml
+  when: action == "deploy"
+
+- import_tasks: service.yml
+  when: action in ["started", "stopped", "restarted"]
+

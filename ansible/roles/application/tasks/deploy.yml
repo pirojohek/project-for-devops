@@ -1,0 +1,10 @@
+- name: Копируем Jar файлик
+  copy:
+    src: ../../../build/libs/project-for-devops.jar
+    dest: "{{ jar_path }}"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: '0755'
+  notify:
+    - Restart Spring Boot
+

@@ -1,0 +1,33 @@
+
+- name: Создаем группу пользователей
+  group:
+    name: "{{ group }}"
+    state: present
+
+- name: Создаем пользователя
+  user:
+    name: "{{ user }}"
+    group: "{{ group }}"
+    shell: /bin/false # пользователь не может залогиниться в систему под этим пользователем
+    system: yes
+    state: present
+
+- name: Создаем папку для приложения
+  file:
+    path: "{{ working_dir }}"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: '0755'
+
+
+- name: Отправляем Systemd unit файл
+  template:
+    src: springboot.service.j2
+    dest: "/etc/systemd/system/{{ service_name }}.service"
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Reload systemd
+    - Enable and start Spring Boot

@@ -1,2 +1,5 @@
-app_name: Project for devops
-давай
+service_name: myapp
+jar_path: /opt/myapp/app.jar
+working_dir: /opt/myapp
+user: appuser
+group: appuser

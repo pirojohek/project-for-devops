@@ -1,0 +1,7 @@
+---
+- name: Деплоим приложение
+  hosts: servers
+  become: yes
+
+  roles:
+    - application

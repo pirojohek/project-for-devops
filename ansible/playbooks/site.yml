@@ -1,0 +1,26 @@
+---
+- name: Подготавливаем систему
+  hosts: servers
+  become: yes
+
+  roles:
+    - setup
+
+- name: Устанавливаем PostgreSQL
+  hosts: servers
+  become: yes
+  roles:
+    - postgres
+
+- name: Устанавливаем Redis
+  hosts: servers
+  become: yes
+  roles:
+    - redis
+
+- name: Деплой Spring Boot application
+  hosts: servers
+  become: yes
+  roles:
+    - application
+

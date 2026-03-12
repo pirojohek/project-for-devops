@@ -1,16 +1,2 @@
-system_packages:
-  - git
-  - curl
-
-java_jdk: openjdk-21-jdk
-
-
-docker:
-  - docker-ce
-  - docker-ce-cli
-  - containerd.io
-  - docker-compose-plugin
-
-
 
 

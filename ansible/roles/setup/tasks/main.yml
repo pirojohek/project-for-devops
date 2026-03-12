@@ -1,0 +1,26 @@
+---
+- name: Обновление списка пакетов
+  apt:
+    update_cache: yes # обновляем список пакетов перед выполнением задачи
+    cache_valid_time: 3600 # это время в секундах, в течение которого cache считается актуальным
+
+- name: Устанавливаем базовые пакеты
+  apt:
+    name: "{{ system_packages }}"
+    state: present
+
+- name: Устанавливаем JDK
+  apt:
+    name: "{{ java_jdk }}"
+    state: present
+
+- name: Устанавливаем Docker
+  apt:
+    name: "{{ docker }}"
+    state: present
+
+- name: Запускаем Docker
+  service:
+    name: docker
+    state: started
+    enabled: yes

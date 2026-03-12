@@ -6,28 +6,12 @@ on:
   workflow_dispatch:
 
 jobs:
-
-  build:
+  build-and-deploy:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
-      - run: ./gradlew build
-      - name: Upload jar
-        uses: actions/upload-artifact@v4
-        with:
-          name: spring-boot-jar
-          path: build/libs/*.jar
-
-  deploy:
-    runs-on: self-hosted
-    needs: build
-    steps:
-      - uses: actions/checkout@v4
-      - name: Download jar
-        uses: actions/download-artifact@v4
-        with:
-          name: spring-boot-jar
-          path: build/libs/
+      - name: Build jar
+        run: ./gradlew build
       - name: Deploy via Ansible
         run: ansible-playbook ansible/playbooks/site.yml \
           -i ansible/inventory/hosts.ini \

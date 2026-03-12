@@ -13,6 +13,4 @@ jobs:
       - name: Build jar
         run: ./gradlew build
       - name: Deploy via Ansible
-        run: ansible-playbook ansible/playbooks/site.yml \
-          -i ansible/inventory/hosts.ini \
-          -e action=deploy
+        run: ansible-playbook ansible/playbooks/site.yml -i ansible/inventory/hosts.ini -e action=deploy

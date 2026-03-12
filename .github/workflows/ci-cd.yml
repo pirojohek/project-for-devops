@@ -16,4 +16,4 @@ jobs:
       - name: Deploy via Ansible
         run: |
           cd ansible
-          ansible-playbook -i inventory playbooks/site.yml -e action=deploy
+          ansible-playbook -i inventory/hosts.ini playbooks/site.yml -e action=deploy

@@ -17,4 +17,4 @@
   systemd:
     name: postgresql
     state: started
-    enabled: yes # добавляем в автозапуск системы
+    enabled: yes

@@ -8,7 +8,7 @@
     update_cache: yes
 
 
-- name: Install psycopg2 for Ansible PostgreSQL modules
+- name: Устанавливаем psycopg2 для Ansible PostgreSQL модуля
   apt:
     name: python3-psycopg2
     state: present

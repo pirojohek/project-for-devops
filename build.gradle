@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'by.pirog'
-
+version = '0.0.1-SNAPSHOT'
 description = 'Demo project for Spring Boot'
 
 java {
@@ -14,37 +14,42 @@ java {
 	}
 }
 
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-}
-
 repositories {
 	mavenCentral()
 }
 
+configurations.all {
+	// ❌ убираем logback полностью
+	exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+	exclude group: 'ch.qos.logback', module: 'logback-classic'
+	exclude group: 'ch.qos.logback', module: 'logback-core'
+
+	// ❌ убираем конфликтующий мост
+	exclude group: 'org.apache.logging.log4j', module: 'log4j-to-slf4j'
+}
+
 dependencies {
-	implementation('org.springframework.boot:spring-boot-starter-web') {
-		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
-	}
-	implementation('org.springframework.boot:spring-boot-starter-data-jpa') {
-		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
-	}
-	implementation('org.springframework.boot:spring-boot-starter-data-redis') {
-		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
-	}
-	implementation('org.springframework.boot:spring-boot-starter-cache') {
-		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
-	}
-	implementation('org.springframework.boot:spring-boot-starter-log4j2') {
-		exclude group: 'org.apache.logging.log4j', module: 'log4j-to-slf4j'
-	}
-	implementation 'io.lettuce:lettuce-core'
+	// Spring
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+	// ✅ ЛОГИ — только Log4j2
+	implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+
+	// ✅ Метрики
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'io.micrometer:micrometer-registry-prometheus'
-	compileOnly 'org.projectlombok:lombok'
+
+	// Redis клиент
+	implementation 'io.lettuce:lettuce-core'
+
+	// DB
 	runtimeOnly 'org.postgresql:postgresql'
+
+	// Lombok
+	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 }
 

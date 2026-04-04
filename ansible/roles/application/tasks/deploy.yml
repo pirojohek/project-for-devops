@@ -1,6 +1,6 @@
 - name: Копируем Jar файлик
   copy:
-    src: ../../../build/libs/project-for-devops.jar
+    src: ../../build/libs/project-for-devops.jar
     dest: "{{ jar_path }}"
     owner: "{{ user }}"
     group: "{{ group }}"

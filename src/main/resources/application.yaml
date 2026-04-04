@@ -26,11 +26,11 @@ spring:
           - redis-master-3:6379
 
 
-  management:
-    endpoints:
-      web:
-        exposure:
-          include: health,info,prometheus
-    endpoint:
-      prometheus:
-        enabled: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    prometheus:
+      enabled: true

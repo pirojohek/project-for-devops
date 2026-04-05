@@ -21,15 +21,39 @@ METRIC_FILE="/var/lib/node_exporter/textfile_collector/backup.prom"
 
 # === Функция записи метрик ===
 write_metrics_success() {
-    echo "backup_success 1" > "$METRIC_FILE"
-    echo "backup_failure 0" >> "$METRIC_FILE"
-    echo "backup_timestamp $(date +%s)" >> "$METRIC_FILE"
+cat <<EOF > "$METRIC_FILE"
+# HELP backup_success Last backup success (1 = ok, 0 = fail)
+# TYPE backup_success gauge
+backup_success 1
+
+# HELP backup_failure Last backup failure (1 = fail, 0 = ok)
+# TYPE backup_failure gauge
+backup_failure 0
+
+# HELP backup_timestamp Unix timestamp of last backup
+# TYPE backup_timestamp gauge
+backup_timestamp $(date +%s)
+
+# HELP backup_success_total Total successful backups
+# TYPE backup_success_total counter
+backup_success_total $(( $(grep -c "backup_success_total" "$METRIC_FILE" 2>/dev/null) + 1 ))
+EOF
 }
 
 write_metrics_failure() {
-    echo "backup_success 0" > "$METRIC_FILE"
-    echo "backup_failure 1" >> "$METRIC_FILE"
-    echo "backup_timestamp $(date +%s)" >> "$METRIC_FILE"
+cat <<EOF > "$METRIC_FILE"
+# HELP backup_success Last backup success (1 = ok, 0 = fail)
+# TYPE backup_success gauge
+backup_success 0
+
+# HELP backup_failure Last backup failure (1 = fail, 0 = ok)
+# TYPE backup_failure gauge
+backup_failure 1
+
+# HELP backup_timestamp Unix timestamp of last backup
+# TYPE backup_timestamp gauge
+backup_timestamp $(date +%s)
+EOF
 }
 
 # === Начало логирования ===

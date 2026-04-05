@@ -1,15 +1,14 @@
 package by.pirog.project_for_devops.core.model;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@Builder
 @Table(name = "users")
 public class UserEntity {
 

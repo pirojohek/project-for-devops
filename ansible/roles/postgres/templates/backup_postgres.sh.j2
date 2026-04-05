@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # === Параметры ===
-USER={{ postgres_username }}
-DB={{ postgres_db }}
-HOST={{ postgres_host }}
-PORT={{ postgres_port }}
+USER=my_user
+DB=mydb
+HOST=localhost
+PORT=5432
 
 BASE_DIR="$HOME/postgres_backup"
 DUMP_DIR="$BASE_DIR/dumps"
@@ -15,6 +15,22 @@ FILENAME="${DB}_$DATE.dump"
 
 REMOTE="yadisk:postgres_backups"
 LOG_FILE="$LOG_DIR/backup.log"
+
+# === Файл метрик для node-exporter ===
+METRIC_FILE="/var/lib/node_exporter/textfile_collector/backup.prom"
+
+# === Функция записи метрик ===
+write_metrics_success() {
+    echo "backup_success 1" > "$METRIC_FILE"
+    echo "backup_failure 0" >> "$METRIC_FILE"
+    echo "backup_timestamp $(date +%s)" >> "$METRIC_FILE"
+}
+
+write_metrics_failure() {
+    echo "backup_success 0" > "$METRIC_FILE"
+    echo "backup_failure 1" >> "$METRIC_FILE"
+    echo "backup_timestamp $(date +%s)" >> "$METRIC_FILE"
+}
 
 # === Начало логирования ===
 echo "==============================" | tee -a "$LOG_FILE"
@@ -35,6 +51,7 @@ pg_dump \
 
 if [ ${PIPESTATUS[0]} -ne 0 ]; then
     echo "Ошибка создания бэкапа!" | tee -a "$LOG_FILE"
+    write_metrics_failure
     exit 1
 fi
 
@@ -45,6 +62,7 @@ pg_restore -l "$DUMP_DIR/$FILENAME" > /dev/null
 
 if [ $? -ne 0 ]; then
     echo "Бэкап повреждён!" | tee -a "$LOG_FILE"
+    write_metrics_failure
     exit 1
 fi
 
@@ -55,15 +73,17 @@ rclone copy "$DUMP_DIR/$FILENAME" "$REMOTE" 2>&1 | tee -a "$LOG_FILE"
 
 if [ $? -ne 0 ]; then
     echo "Ошибка копирования в облако!" | tee -a "$LOG_FILE"
+    write_metrics_failure
     exit 1
 fi
 
-# === Удаление старых бэкапов (оставляем последние 7) ===
+# === Удаление старых бэкапов ===
 echo "Удаление старых бэкапов..." | tee -a "$LOG_FILE"
 
-# старые файлы сверху, новые снизу
 ls -1tr "$DUMP_DIR"/*.dump 2>/dev/null | head -n -7 | xargs -r rm -f
 
-# === Завершение ===
+# === УСПЕШНОЕ ЗАВЕРШЕНИЕ ===
 echo "Бэкап завершён: $FILENAME" | tee -a "$LOG_FILE"
 echo "Время завершения: $(date)" | tee -a "$LOG_FILE"
+
+write_metrics_success

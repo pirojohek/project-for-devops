@@ -19,7 +19,6 @@ LOG_FILE="$LOG_DIR/backup.log"
 # === Файл метрик для node-exporter ===
 METRIC_FILE="/var/lib/node_exporter/textfile_collector/backup.prom"
 
-# === Функция записи метрик ===
 write_metrics_success() {
 cat <<EOF > "$METRIC_FILE"
 # HELP backup_success Last backup success (1 = ok, 0 = fail)
@@ -36,7 +35,11 @@ backup_timestamp $(date +%s)
 
 # HELP backup_success_total Total successful backups
 # TYPE backup_success_total counter
-backup_success_total $(( $(grep -c "backup_success_total" "$METRIC_FILE" 2>/dev/null) + 1 ))
+backup_success_total $(( $(grep -E "backup_success_total [0-9]+" "$METRIC_FILE" | awk '{print $2}' 2>/dev/null) + 1 ))
+
+# HELP backup_failure_total Total failed backups
+# TYPE backup_failure_total counter
+backup_failure_total $(( $(grep -E "backup_failure_total [0-9]+" "$METRIC_FILE" | awk '{print $2}' 2>/dev/null) ))
 EOF
 }
 
@@ -53,6 +56,14 @@ backup_failure 1
 # HELP backup_timestamp Unix timestamp of last backup
 # TYPE backup_timestamp gauge
 backup_timestamp $(date +%s)
+
+# HELP backup_success_total Total successful backups
+# TYPE backup_success_total counter
+backup_success_total $(( $(grep -E "backup_success_total [0-9]+" "$METRIC_FILE" | awk '{print $2}' 2>/dev/null) ))
+
+# HELP backup_failure_total Total failed backups
+# TYPE backup_failure_total counter
+backup_failure_total $(( $(grep -E "backup_failure_total [0-9]+" "$METRIC_FILE" | awk '{print $2}' 2>/dev/null) + 1 ))
 EOF
 }
 

@@ -29,6 +29,7 @@ public class UsersController {
 
     @GetMapping
     public ResponseEntity<List<UserEntity>> getUsers(){
+        log.info("Получен запрос на получение списка пользователей");
         return ResponseEntity.ok(this.userService.getUsers());
     }
 
